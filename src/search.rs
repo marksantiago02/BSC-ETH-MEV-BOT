@@ -774,7 +774,7 @@ mod search_tests {
                     MEV_ADDRESS,
                     AccountOverride {
                         code: Some(
-                            include_str!("../metadata/bytecode/Rustitrage.bin")
+                            include_str!("./src/metadata/bytecode/Rustitrage.bin")
                                 .parse::<Bytes>()
                                 .unwrap(),
                         ),
@@ -785,7 +785,7 @@ mod search_tests {
                     SEARCHER_ADDRESS,
                     AccountOverride {
                         code: Some(
-                            include_str!("../metadata/bytecode/Searcher.bin")
+                            include_str!("./src/metadata/bytecode/Searcher.bin")
                                 .parse::<Bytes>()
                                 .unwrap(),
                         ),

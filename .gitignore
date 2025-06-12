@@ -1,6 +1,5 @@
 /db
 /logs
-/metadata
 /target
 
 .env

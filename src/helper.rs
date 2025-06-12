@@ -63,7 +63,7 @@ lazy_static! {
         ),))
     )));
     pub static ref SEARCHER_BYTE_CODE: Bytecode = Bytecode::new_raw(
-        include_str!("../metadata/bytecode/Searcher.bin")
+        include_str!("./src/metadata/bytecode/Searcher.bin")
             .parse::<Bytes>()
             .unwrap_or_else(|e| {
                 panic!("Failed to parse bytecode: {:?}", e);
