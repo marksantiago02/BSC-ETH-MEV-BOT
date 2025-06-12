@@ -3,13 +3,13 @@ use alloy::sol;
 sol!(
     #[sol(rpc)]
     Searcher,
-    "./metadata/ABI/Searcher.json"
+    "./src/metadata/ABI/Searcher.json"
 );
 
 sol!(
     #[sol(rpc)]
     Rustitrage,
-    "./metadata/ABI/Rustitrage.json"
+    "./src/metadata/ABI/Rustitrage.json"
 );
 
 sol!(
