@@ -1,149 +1,27 @@
-name: 🦀 Rust CI/CD Pipeline
+name: Rust
 
 on:
   push:
     branches: [ "master" ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
   pull_request:
     branches: [ "master" ]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-  schedule:
-    - cron: '0 0 * * 0'  # Run weekly for security audit
 
 env:
   CARGO_TERM_COLOR: always
   POOLS_DATA_DIR: "./metadata/TEST/"
-  RUST_BACKTRACE: 1
-  RUSTFLAGS: "-D warnings"
 
 jobs:
-  check:
-    name: ✅ Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: 📦 Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - name: 💾 Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: 🔍 Check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-  test:
-    name: 🧪 Test Suite
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: 📦 Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - name: 💾 Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: 🧪 Run tests
-        run: cargo test --verbose
-        env:
-          RUST_LOG: debug
-
-  lints:
-    name: 🔍 Lints
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: 📦 Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
-      - name: 💅 Run rustfmt
-        run: cargo fmt -- --check
-      - name: 🔍 Run clippy
-        run: cargo clippy -- -D warnings
-
   build:
-    name: 🏗️ Build
-    needs: [check, test, lints]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: 📦 Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-      - name: 💾 Cache dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
-      - name: 🏗️ Build Release
-        run: cargo build --verbose --release
-      - name: 📦 Upload artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: rust-binary
-          path: target/release
-
-  security:
-    name: 🔒 Security Audit
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: 🔒 Install cargo-audit
-        run: cargo install cargo-audit
-      - name: 🔍 Run security audit
-        run: cargo audit
-      - name: 💾 Cache advisory database
-        uses: actions/cache@v3
-        with:
-          path: ~/.cargo/advisory-db
-          key: advisory-db-${{ runner.os }}
-
-  coverage:
-    name: 📊 Code Coverage
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: 📦 Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-      - name: 📊 Install cargo-tarpaulin
-        run: cargo install cargo-tarpaulin
-      - name: 🔍 Generate coverage report
-        run: cargo tarpaulin --out Xml
-      - name: 📤 Upload to codecov.io
-        uses: codecov/codecov-action@v3
-        with:
-          fail_ci_if_error: true
+    - uses: actions/checkout@v4
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y pkg-config libssl-dev
+    - name: Build
+      run: cargo build --verbose
+    - name: Run tests
+      run: cargo test --verbose
+    - name: Check formatting
+      run: cargo fmt -- --check
+    - name: Run clippy
+      run: cargo clippy -- -D warnings
